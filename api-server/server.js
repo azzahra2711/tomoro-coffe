@@ -449,6 +449,61 @@ app.put("/reviews/update/:id", (req, res) => {
   });
 });
 
+app.put("/menus/update-ratings", (req, res) => {
+  // Query untuk menghitung rata-rata rating dari tabel reviews berdasarkan menu_id
+  const calculateRatingsQuery = `
+    SELECT menu_id, AVG(rating) AS average_rating
+    FROM reviews
+    INNER JOIN pesanans ON reviews.id_pesanan = pesanans.id
+    GROUP BY menu_id
+  `;
+
+  // Query untuk mengupdate rating pada tabel menus
+  const updateMenuRatingQuery = `
+    UPDATE menus
+    SET rating = ?
+    WHERE id = ?
+  `;
+
+  // Jalankan query untuk menghitung rata-rata rating
+  db.query(calculateRatingsQuery, (err, results) => {
+    if (err) {
+      console.error("Error calculating ratings:", err);
+      return res.status(500).json({ message: "Error calculating ratings", error: err });
+    }
+
+    // Jika tidak ada data review, beri respons kosong
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No reviews found to update ratings" });
+    }
+
+    // Lakukan update untuk setiap menu berdasarkan hasil rata-rata rating
+    const updates = results.map(({ menu_id, average_rating }) => {
+      return new Promise((resolve, reject) => {
+        db.query(updateMenuRatingQuery, [Math.round(average_rating), menu_id], (updateErr, updateResult) => {
+          if (updateErr) {
+            reject(updateErr);
+          } else {
+            resolve(updateResult);
+          }
+        });
+      });
+    });
+
+    // Tunggu semua update selesai
+    Promise.all(updates)
+      .then(() => {
+        console.log("All menus ratings updated successfully");
+        res.status(200).json({ message: "All menus ratings updated successfully" });
+      })
+      .catch((updateErr) => {
+        console.error("Error updating menu ratings:", updateErr);
+        res.status(500).json({ message: "Error updating menu ratings", error: updateErr });
+      });
+  });
+});
+
+
 
 
 // Jalankan server

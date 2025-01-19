@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet,ScrollView } from "react-native";
 import Modal from "react-native-modal";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
@@ -94,26 +94,31 @@ export default function MenuModal({ isVisible, onClose, menuData, userData }) {
 
   return (
     <Modal
-      isVisible={isVisible}
-      onBackdropPress={onClose}
-      style={{ margin: 0, justifyContent: "flex-end" }}
-    >
-      <View style={styles.modalContent}>
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <View style={styles.closeButtonView}>
-            <Text style={styles.closeButtonText}>x</Text>
-          </View>
-        </TouchableOpacity>
+    isVisible={isVisible}
+    onBackdropPress={onClose}
+    style={{ margin: 0, justifyContent: "flex-end" }}
+  >
+    <View style={styles.modalContent}>
+      {/* Tombol Close */}
+      <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+        <View style={styles.closeButtonView}>
+          <Text style={styles.closeButtonText}>x</Text>
+        </View>
+      </TouchableOpacity>
 
+      {/* ScrollView untuk konten */}
+      <ScrollView>
+        {/* Gambar Menu */}
         <Image source={menuImage} style={styles.image} resizeMode="contain" />
 
+        {/* Rating */}
         <View style={styles.ratingContainer}>
           {[1, 2, 3, 4, 5].map((star) => (
             <Text
               key={star}
               style={{
                 fontSize: 30,
-                color: rating >= star ? "#FFD700" : "#CCCCCC", // Menetapkan rating ke 4
+                color: rating >= star ? "#FFD700" : "#CCCCCC",
                 marginHorizontal: 5,
               }}
             >
@@ -124,6 +129,7 @@ export default function MenuModal({ isVisible, onClose, menuData, userData }) {
 
         <View style={styles.divider} />
 
+        {/* Pilihan Ukuran */}
         <View style={styles.sizeContainer}>
           <TouchableOpacity
             onPress={() => setSelectedSize("Reguler")}
@@ -153,6 +159,7 @@ export default function MenuModal({ isVisible, onClose, menuData, userData }) {
           </TouchableOpacity>
         </View>
 
+        {/* Pilihan Iced */}
         <View style={styles.icedContainer}>
           <TouchableOpacity
             onPress={handleIcedPress}
@@ -167,6 +174,7 @@ export default function MenuModal({ isVisible, onClose, menuData, userData }) {
 
         <View style={styles.divider} />
 
+        {/* Counter */}
         <View style={styles.countContainer}>
           <TouchableOpacity
             onPress={handleDecrement}
@@ -183,14 +191,16 @@ export default function MenuModal({ isVisible, onClose, menuData, userData }) {
           </TouchableOpacity>
         </View>
 
+        {/* Tombol Add to Cart */}
         <TouchableOpacity
           style={styles.addToChartButton}
           onPress={handleAddToCart}
         >
           <Text style={styles.addToChartText}>Add to Cart</Text>
         </TouchableOpacity>
-      </View>
-    </Modal>
+      </ScrollView>
+    </View>
+  </Modal>
   );
 }
 

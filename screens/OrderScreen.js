@@ -106,8 +106,17 @@ export default function OrderScreen({ userData }) {
         })
         .catch((error) => {
           console.error("There was an error fetching the reviews:", error);
-        });
-    }, 100);
+        });    
+            // Panggil API untuk update ratings
+            axios
+            .put("http://172.20.10.4:5000/menus/update-ratings")
+            .then((response) => {
+              console.log(response.data.message); // Tampilkan pesan sukses
+            })
+            .catch((error) => {
+              console.error("Error updating ratings:", error);
+            });
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [userId]);

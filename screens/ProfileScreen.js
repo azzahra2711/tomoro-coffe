@@ -28,7 +28,7 @@ export default function ProfileScreen({ userData, onLogout }) {
       {/* Header Section */}
       <View style={styles.header}>
         <Image
-          source={require("../assets/takutnyo.jpg")}
+          source={require("../assets/pp.png")}
           style={styles.profileImage}
         />
         <Text style={styles.username}>{userData.name}</Text>
